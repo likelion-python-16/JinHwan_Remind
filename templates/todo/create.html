@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <h2>Create a New Todo</h2>
+
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name">
+    </div>
+    <div>
+        <label for="description">Description:</label>
+        <textarea name="description" id="description"></textarea>
+    </div>
+    <div>
+        <label for="complete">Complete:</label>
+        <input type="checkbox" name="complete" id="complete">
+    </div>
+    <div>
+        <label for="exp">Experience Points:</label>
+        <input type="number" name="exp" id="exp" min="0">
+    </div>
+    <button type="submit" id="todoCreate">Create</button>
+</div>
+
+<script>
+document.getElementById("todoCreate").addEventListener("click", ()=> {
+    console.log("create click")
+});
+</script>    
+
+{% endblock %}
