@@ -42,7 +42,7 @@ function fetchTodoData(){
 
 // 응답에서 todo 배열 추출
 function extractTodoArray(data){
-    if(Array.isArray(data)) return data;
+    if(Array.isArray(data)) return data; //데이터 검수
     return [];
 }
 
@@ -57,11 +57,14 @@ function renderTodoList(todos){
 
 function createTodoElement(todo){
     const div = document.createElement("div");
-    div.className = "todo-item";
+    div.className = "todo-item"; //<div class="todo-item completed"></div>
 
     if (todo.complete){
         div.classList.add("completed"); // <div class="todo-item completed" > </div>
     }// .todo-item.completed{ }
+
+    div.addEventListener("click", () => detailView(todo.id))
+
 
     div.innerHTML = `
         <p><strong>Name:</strong> ${todo.name}</p>
@@ -90,19 +93,22 @@ toComplete(todo.id) 호출 → axiosInstance.patch()로 서버에 완료 요청
 목록을 다시 불러올 때 → todo.complete === true인 항목에 completed 클래스 추가 → 밑줄 CSS 적용
 */
 
+// 완료버튼 클릭시 todo항목을 완료 상태로 변경
 function toComplete(id){
     axiosInstance.patch(`/todo/api/update/${id}/`, {complete:true}) //
     .then(() => loadTodoList()) // false -> true 서버전송 -> 전달
     .catch(err => console.error("완료 처리 실패:", err)); //에러처리
 }
 
-//공토요소로 처리예정
-
-function datetimeToString(datetime){
-    if (!datetime) return "-";
-    const date = new Date(datetime);
-    return date.toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
+// 상세 페이지로 이동 트리거가 없다. 
+function detailView(id) {
+    window.location.href = `/todo/detail/${id}/`;
 }
+
+
+
+
+
 </script>  
 {% endblock %}
   
