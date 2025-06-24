@@ -6,26 +6,27 @@
 <button class="todoCreate" id="createBtn"> Todo 등록하기</button>
 
 <script>
-// 1. 초기화   
+// 1. 문서가 완전히 로드되면 초기화 함수 실행
 document.addEventListener("DOMContentLoaded", init);
 
-// 2. UI이벤트
+// 2. 초기화: UI 이벤트 연결 및 첫 페이지 Todo 목록 로드
 function init(){
     UIEvents();
     loadTodoList(); 
 }
 
-// UI 이벤트2-1
+// 2-1. UI 이벤트 바인딩: "Todo 등록하기" 버튼 클릭 시 등록 페이지로 이동
 function UIEvents(){
     document.getElementById("createBtn")
     .addEventListener("click", onCreateClick);
 }
 
+// 2-1-1. 등록 버튼 클릭 시 /todo/create/로 이동
 function onCreateClick(){
     window.location.href = "/todo/create/";
 }
 
-// 리스트 로드
+// 3. 서버에서 Todo 목록 불러오기
 function loadTodoList(){
     fetchTodoData()
     .then(data => {
@@ -35,18 +36,20 @@ function loadTodoList(){
     .catch(err => console.error('리스트 로드 실패', err));
 }
 
-// 서버에서 todo 목록가져오기
+// 3-1. axios를 이용해 서버로부터 특정 페이지의 Todo 목록 가져오기
 function fetchTodoData(){
-    return axiosInstance.get('/todo/api/list/').then(res => res.data); 
+    return axiosInstance
+    .get('/todo/api/list/')
+    .then(res => res.data); 
 }
 
-// 응답에서 todo 배열 추출
+// 3-2. API 응답 형식에 따라 Todo 배열 추출(페이지네이션들어오면 if 추가)
 function extractTodoArray(data){
     if(Array.isArray(data)) return data; //데이터 검수
     return [];
 }
 
-// 목록 출력
+// 3-3. 추출된 Todo 항목들을 화면에 렌더링
 function renderTodoList(todos){
     const container = document.querySelector(".todocontainer"); // .todocontainer{}
     container.innerHTML = "";
@@ -55,17 +58,20 @@ function renderTodoList(todos){
     );
 }
 
+// 3-3-1. 단일 Todo 객체를 HTML 요소로 생성
 function createTodoElement(todo){
     const div = document.createElement("div");
     div.className = "todo-item"; //<div class="todo-item completed"></div>
 
+    // 완료된 항목이면 밑줄 적용
     if (todo.complete){
-        div.classList.add("completed"); // <div class="todo-item completed" > </div>
-    }// .todo-item.completed{ }
+        div.classList.add("completed"); 
+    }
 
+    // 목록 클릭 시 상세 페이지 이동
     div.addEventListener("click", () => detailView(todo.id))
 
-
+    // HTML 내용 설정
     div.innerHTML = `
         <p><strong>Name:</strong> ${todo.name}</p>
         <p><strong>Description:</strong> ${todo.description}</p>
@@ -86,28 +92,19 @@ function createTodoElement(todo){
     return div;   
 }
 
-/*
-createTodoElement(todo) 내의 .completeBtn 클릭 이벤트 발생
-toComplete(todo.id) 호출 → axiosInstance.patch()로 서버에 완료 요청
-완료 처리 성공 시 → loadTodoList(1)로 다시 목록 불러오기
-목록을 다시 불러올 때 → todo.complete === true인 항목에 completed 클래스 추가 → 밑줄 CSS 적용
-*/
-
-// 완료버튼 클릭시 todo항목을 완료 상태로 변경
+// 3-3-2. 완료 버튼 클릭 시 해당 Todo 항목을 완료 상태로 변경
 function toComplete(id){
     axiosInstance.patch(`/todo/api/update/${id}/`, {complete:true}) //
-    .then(() => loadTodoList()) // false -> true 서버전송 -> 전달
-    .catch(err => console.error("완료 처리 실패:", err)); //에러처리
+    .then(() => loadTodoList()) 
+    .catch(err => console.error("완료 처리 실패:", err)); 
 }
 
-// 상세 페이지로 이동 트리거가 없다. 
+// 3-3-3. 상세 페이지로 이동 (← 이전, 1 2 3, → 다음)
 function detailView(id) {
     window.location.href = `/todo/detail/${id}/`;
 }
 
-
-
-
+// 3-4. 페이지네이션 구성 
 
 </script>  
 {% endblock %}
