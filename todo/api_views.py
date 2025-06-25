@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from .models import Todo
 from .serializers import TodoSerializer
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 
 
 # 전체보기
@@ -72,4 +72,45 @@ class TodoDeleteAPI(APIView):
             return Response({"error":"해당하는 todo가 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
         todo.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)    
+        return Response(status=status.HTTP_204_NO_CONTENT)   
+
+
+# DRF_GenericAPIView
+# list
+class TodoGenericsListAPI(generics.ListAPIView):
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
+
+# create
+class TodoGenericsCreateAPI(generics.CreateAPIView):
+    pass
+
+
+# retrieve
+class TodoGenericsRetrieveAPI(generics.RetrieveAPIView):
+    pass
+
+# update
+class TodoGenericsUpdateAPI(generics.UpdateAPIView):
+    pass
+
+# delete
+class TodoGenericsDeleteAPI(generics.DeleteAPIView):
+    pass
+
+
+# ListCreate
+class TodoGenericsListCreateAPI(generics.ListCreateAPIView):
+    pass
+
+
+# retrieveUpdateDelete
+class TodoGenericsRetrieveUpdateDeleteAPI(generics.RetrieveUpdateDeleteAPIView):
+    pass
+
+
+
+# DRF_ViewSets
+# viewSet
+
+# LogoutAPI
