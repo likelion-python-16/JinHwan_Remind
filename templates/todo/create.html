@@ -69,7 +69,7 @@ function gatherformData(){
 
 // 서버전송
 function createTodo(payload){
-    axiosInstance.post("/todo/api/create/", payload) // 어디로 이동
+    axiosInstance.post("/todo/viewsets/view/", payload) // 어디로 이동
     .then(response => {
         window.location.href = "/todo/list/";
     })//서버에 데이터를 저장한 후 이동할 페이지 링크

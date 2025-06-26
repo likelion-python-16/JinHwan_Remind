@@ -49,7 +49,7 @@ function getTodoId(){
 function loadTodoIntoForm(pk){
     //데이터를 호출 
     axiosInstance
-    .get(`/todo/api/retrieve/${pk}/`) //엔드포인트: url주소 호출
+    .get(`/todo/viewsets/view/${pk}/`) //엔드포인트: url주소 호출
     .then(res => { // 서버 응답을 받아오는 매개변수 
         populateForm(res.data);
         console.log("res??", res); //전체 응답 데이터
@@ -84,7 +84,7 @@ function handleUpdate(pk){
       
     //데이터를 호출 
     axiosInstance
-        .patch(`/todo/api/update/${pk}/`, payload) //
+        .patch(`/todo/viewsets/view/${pk}/`, payload) //
         .then(() => redirectToDetail(pk))
         .catch(err => {
             console.error('로딩실패', err);

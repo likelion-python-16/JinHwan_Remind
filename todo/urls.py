@@ -1,15 +1,39 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
-from . import api_views
-from .api_views import (
+# from . import api_views  api_views.py
+# from .api_views import (
+#     TodoGenericsListAPI, 
+#     TodoGenericsCreateAPI, 
+#     TodoGenericsRetrieveAPI, 
+#     TodoGenericsUpdateAPI,
+#     TodoGenericsDeleteAPI,
+#     TodoGenericsListCreateAPI,
+#     TodoGenericsRetrieveUpdateDeleteAPI,
+# )
+
+from . api_views import (
+    TodoListAPI,
+    TodoCreateAPI,
+    TodoRetrieveAPI,
+    TodoUpdateAPI,
+    TodoDeleteAPI,
     TodoGenericsListAPI, 
     TodoGenericsCreateAPI, 
     TodoGenericsRetrieveAPI, 
     TodoGenericsUpdateAPI,
     TodoGenericsDeleteAPI,
     TodoGenericsListCreateAPI,
-    TodoGenericsRetrieveUpdateDeleteAPI,
+    TodoGenericsRetrieveUpdateDeleteAPI, 
+    TodoViewSet,
+    CustomLogoutAPI,
+
 )
+
+
+from rest_framework.routers import DefaultRouter
+router = DefaultRouter()
+router.register("view", TodoViewSet, basename="todo") 
+
 
 urlpatterns = [
     # path("list/", views.todo_list, name="todo_List"), # list 목록보기 
@@ -21,11 +45,11 @@ urlpatterns = [
     path("update/<int:pk>/", views.TodoUpdateViews.as_view(), name="todo_Update"),
 
     # apiViews
-    path("api/list/", api_views.TodoListAPI.as_view(), name="todo_api_list"),
-    path("api/create/", api_views.TodoCreateAPI.as_view(), name="todo_api_create"),
-    path("api/retrieve/<int:pk>/", api_views.TodoRetrieveAPI.as_view(), name="todo_api_retrieve"),
-    path("api/update/<int:pk>/",api_views.TodoUpdateAPI.as_view(), name="todo_api_update"),
-    path("api/delete/<int:pk>/",api_views.TodoDeleteAPI.as_view(), name="todo_api_delete"),
+    path("api/list/", TodoListAPI.as_view(), name="todo_api_list"),
+    path("api/create/", TodoCreateAPI.as_view(), name="todo_api_create"),
+    path("api/retrieve/<int:pk>/", TodoRetrieveAPI.as_view(), name="todo_api_retrieve"),
+    path("api/update/<int:pk>/", TodoUpdateAPI.as_view(), name="todo_api_update"),
+    path("api/delete/<int:pk>/", TodoDeleteAPI.as_view(), name="todo_api_delete"),
 
     #GenericAPIView
     path("generics/list/", TodoGenericsListAPI.as_view(), name="todo_api_list"),
@@ -33,7 +57,15 @@ urlpatterns = [
     path("generics/retrieve/<int:pk>/", TodoGenericsRetrieveAPI.as_view(), name="todo_api_retrieve"),
     path("generics/update/<int:pk>/",TodoGenericsUpdateAPI.as_view(), name="todo_api_update"),
     path("generics/delete/<int:pk>/",TodoGenericsDeleteAPI.as_view(), name="todo_api_delete"),
-    path("generics/delete/<int:pk>/",TodoGenericsListCreateAPI.as_view(), name="todo_api_delete"),
-    path("generics/delete/<int:pk>/",TodoGenericsRetrieveUpdateDeleteAPI.as_view(), name="todo_api_delete"),
+
+    #GenericAPIView + Mixin
+    path("generics/", TodoGenericsListCreateAPI.as_view(), name="todo_generics_list_create"),
+    path("generics/<int:pk>/", TodoGenericsRetrieveUpdateDeleteAPI.as_view(), name="todo_generics_detail"),
+
+    # ViewSets
+    path("viewsets/", include(router.urls)), # /todo/viewsets/view/
+
+    # logout API
+    path("api/custom-logout/", CustomLogoutAPI.as_view(), name="custom-logout"),
 
 ]

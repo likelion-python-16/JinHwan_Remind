@@ -46,3 +46,4 @@ class TodoUpdateViews(UpdateView):
     context_object_name = "todos"
     success_url = reverse_lazy("todo_List")
 
+

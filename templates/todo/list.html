@@ -4,6 +4,7 @@
 
 <div class="todocontainer"></div>
 <button class="todoCreate" id="createBtn"> Todo 등록하기</button>
+<div class="pagination"></div>
 
 <script>
 // 1. 문서가 완전히 로드되면 초기화 함수 실행
@@ -12,7 +13,7 @@ document.addEventListener("DOMContentLoaded", init);
 // 2. 초기화: UI 이벤트 연결 및 첫 페이지 Todo 목록 로드
 function init(){
     UIEvents();
-    loadTodoList(); 
+    loadTodoList(1); 
 }
 
 // 2-1. UI 이벤트 바인딩: "Todo 등록하기" 버튼 클릭 시 등록 페이지로 이동
@@ -27,11 +28,12 @@ function onCreateClick(){
 }
 
 // 3. 서버에서 Todo 목록 불러오기
-function loadTodoList(){
+function loadTodoList(page){
     fetchTodoData()
     .then(data => {
         const todos = extractTodoArray(data); //
         renderTodoList(todos); //탬플릿을 꾸며서 화면에 출력하기 함수
+        renderPagination(data, Page);
     })
     .catch(err => console.error('리스트 로드 실패', err));
 }
@@ -39,7 +41,7 @@ function loadTodoList(){
 // 3-1. axios를 이용해 서버로부터 특정 페이지의 Todo 목록 가져오기
 function fetchTodoData(){
     return axiosInstance
-    .get('/todo/api/list/')
+    .get('/todo/viewsets/view/')
     .then(res => res.data); 
 }
 
@@ -94,7 +96,7 @@ function createTodoElement(todo){
 
 // 3-3-2. 완료 버튼 클릭 시 해당 Todo 항목을 완료 상태로 변경
 function toComplete(id){
-    axiosInstance.patch(`/todo/api/update/${id}/`, {complete:true}) //
+    axiosInstance.patch(`/todo/viewsets/view/${id}/`, {complete:true}) //
     .then(() => loadTodoList()) 
     .catch(err => console.error("완료 처리 실패:", err)); 
 }
@@ -104,7 +106,44 @@ function detailView(id) {
     window.location.href = `/todo/detail/${id}/`;
 }
 
-// 3-4. 페이지네이션 구성 
+// 3-4. 페이지네이션 구성
+function renderPagination(data, currentPage){
+    const wrapper = document.querySelector(".pagination");
+    wrapper.innerHTML = "";
+
+    const totalPages = data.page_count; // 총페이지수를 변수에 저장
+    
+
+    // 이전페이지 버튼
+    const prevBtn = document.createElement("button");
+    prevBtn.innerText = "<"; 
+    prevBtn.disabled = !data.previous;
+    // data.previous 이전데이터 DRf 기본적으로 제공해주는 페이지네이션 응답 속성 이름
+    prevBtn.addEventListerner("click", () => loadTodoList(currentPage - 1) );
+    wrapper.appendChild(prevBtn);
+
+    // 개별 페이지 버튼들 생성
+    for(let i = 1; i <= totalPages; i++){ // for ( 초기값; 조건; 증가){ if(){} }
+        const btn = document.createElement("button");
+        btn.innerText = i;
+        if(i === currentPage){
+            btn.disabled = true;
+            btn.classList.add("active"); // css로 .active 스타일 지정
+        }
+        btn.addEventListerner("click", () => loadTodoList(i));
+        wrapper.appendChild(btn);
+    } 
+
+    // 다음 페이지 버튼 
+    const nextBtn = document.createElement("button"); 
+    nextBtn.innerText = ">";
+    nextBtn.disabled = !data.next;
+    nextBtn.addEventListerner("click", () => loadTodoList(currentPage + 1) );
+    wrapper.appendChild(nextBtn);
+} 
+
+
+
 
 </script>  
 {% endblock %}
