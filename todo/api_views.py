@@ -4,6 +4,7 @@ from .serializers import TodoSerializer
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework import viewsets
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 # 전체보기
@@ -126,6 +127,10 @@ class TodoGenericsRetrieveUpdateDeleteAPI(generics.RetrieveUpdateDestroyAPIView)
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
 
+from .pagination import CustomPageNumberPagination
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 
 # DRF_ViewSets
 # viewSet
@@ -133,18 +138,22 @@ class TodoViewSet(viewsets.ModelViewSet):
     # queryset = Todo.objects.all().order_by("-created_at")
     serializer_class = TodoSerializer
 
-    #인증 
+    # pagination
+    pagination_class = CustomPageNumberPagination
 
-    #권한
+    # 인증 
+    authenticateion_classes = [SessionAuthentication]
 
-    def get_queryset(self):
+    # 권한
+    permission_classes = [IsAuthenticated]
+
+    # 이미지
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_queryset(self):  
         qs = Todo.objects.all().order_by("-created_at")
+        print("정렬된 queryset preview:", list(qs[:3]))  # 서버 로그 확인용
         return qs
-
-# 로그인 -> 제공해주는 형식 링크 DRf제공 링크
-# LogoutAPI -> 서버에 로그아웃 요청 
-# 장고기본지원 -> 웹 
-# axios 방식 -> 리액트 뷰, 언리얼엔진, 유니티, 
 
 from django.contrib.auth import logout
 from django.shortcuts import redirect
@@ -159,3 +168,5 @@ class CustomLogoutAPI(APIView):
         # logout(request)
         # return Response({"message": "로그아웃 완료"}, status=status.HTTP_200_OK)
         # return redirect('todo_List')
+
+

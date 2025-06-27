@@ -18,8 +18,12 @@
         <input type="checkbox" name="complete" id="complete">
     </div>
     <div>
-        <label for="completed_at">Complete:</label>
-        <input type="datetime-local" name="completed_at" id="completed_at">
+      <label for="completed_at">Completed At:</label>
+      <input type="datetime-local" name="completed_at" id="completed_at">
+	</div>
+    <div>
+        <label for="image">Images:</label>
+        <input type="file" name="image" id="image">
     </div>
     <div>
         <label for="exp">Experience Points:</label>
@@ -47,24 +51,38 @@ function bindUIEvents(){
 // 데이터 수집 및 전송
 function onCreateClick(){
     //console.log("버튼클릭!!")
-    const payload = gatherformData(); 
+    const payload = gatherFormData(); 
     createTodo(payload);
 }
 
-// 데이터 평탄화
-function gatherformData(){
+
+
+function gatherFormData(){
+    //데이터 처리 메서드 객체 생성
+    const formData = new FormData();
+
+    //숫자처리
     let expVal = document.getElementById('exp').value; 
     if (expVal === "") expVal = 0;
-    const completedAtInput = document.getElementById('completed_at').value; //완료시간 수정불가
+    
+    //날짜처리
+    const completedAtInput = document.getElementById('completed_at').value; 
     const completedAt = completedAtInput ? new Date(completedAtInput).toISOString() : null;
-    return {
-        //수동적 구조 해체방식
-        name:document.getElementById('name').value, //문자형태
-        description:document.getElementById('description').value,
-        complete:document.getElementById('complete').checked,
-        completed_at:completedAt,
-        exp:Number(expVal),
-    };
+
+    //텍스트 필드 추가
+    formData.append("name", document.getElementById('name').value );
+    formData.append("description", document.getElementById('description').value);
+    formData.append("complete", document.getElementById('complete').checked);
+    formData.append("complete_at", completedAt);
+    formData.append("exp", Number(expVal));
+
+    //이미지 파일 추가
+    const imgeInput = document.getElementById('image');
+    if(imgeInput && imgeInput.files.length > 0 ){ // 이미지 파일이 맞는지 이미지 파일 갯수 > 0 클때
+         formData.append("image", imgeInput.files[0]); //사용자가 선택한 첫번째 이미지 객체 
+    } 
+      
+    return formData;
 }
 
 // 서버전송

@@ -11,35 +11,43 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-import os
+import os, environ  # 환경변수 추가
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# 보안코드
+env = environ.Env(DEBUG=(bool, False))
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-_ui4xw0(=)xx)3^i1ub_l!)aht&+%irsu$z+5l5i1+z_=+gy28"
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
-INSTALLED_APPS = [
+CUSTOM_APPS = [
+    "todo",
+]
+
+THIRD_PARTY_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "todo",
     "rest_framework",
 ]
+
+INSTALLED_APPS = CUSTOM_APPS + THIRD_PARTY_APPS
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -104,9 +112,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ko-kr"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Seoul"
 
 USE_I18N = True
 
@@ -129,10 +137,23 @@ STATICFILES_DIRS = [
 ]
 
 
-LOGIN_REDIRECT_URL= "/todo/list/"
-
-
 REST_FRAMEWORK = {
+    # 페이지네이션 클래스:커스텀 지정
     "DEFAULT_PAGINATION_CLASS": "todo.pagination.CustomPageNumberPagination",
-    "PAGE_SIZE": 5,
+    "PAGE_SIZE": 3,
+    # 인증 클래스: 사용자의 로그인 여부를 판단하는 방법 지정
+    # JWT 토큰 기반 인증
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    # 권한 클래스: 인증된 사용자만 접근 가능하도록 설정
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
+
+LOGIN_REDIRECT_URL = "/todo/list/"
+LOGIN_URL = "/api-auth/login/"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")

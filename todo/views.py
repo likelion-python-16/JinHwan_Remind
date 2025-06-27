@@ -41,7 +41,7 @@ class TodoDetailViews(DetailView):
 
 class TodoUpdateViews(UpdateView):
     model = Todo
-    fields = ["name", "description", "complete", "exp"]
+    fields = ["name", "description", "complete", "exp", "image"]
     template_name = "todo/update.html"
     context_object_name = "todos"
     success_url = reverse_lazy("todo_List")

@@ -2,7 +2,8 @@ const axiosInstance = axios.create({
     baseURL: '/',
     headers: {
         "X-CSRFToken":getCookie("csrftoken"),
-        "Content-Type":"application/json"
+        //"Content-Type":"application/json"
+        "Content-Type": "multipart/form-data"
     }
 });
 
