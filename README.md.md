@@ -50,8 +50,8 @@ CSRF_TRUSTED_ORIGINS = [
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 ```
 
-![config/urls.py](images/Pasted image 20250628083438.png)
-![todo/urls.py](images/Pasted image 20250628083602.png)
-![header.html](images/Pasted image 20250628083640.png)
-![settings.py](images/Pasted image 20250628083937.png)
+![config/urls.py](images/config_urls.png)
+![todo/urls.py](images/todo_urls.png)
+![header.html](images/header_html.png)
+![settings.py](images/settings_py.png)
 
