@@ -1,50 +1,57 @@
-# DRF todoList
-그날 수업한 내용은 매일 커밋됩니다.
+# fly.io 
 
-## ⚙️ 개발 환경
 
-- Python 3.12.3
-- Django 5.2.3
-- 가상환경: venv 사용
+## 🔧 수정파일
 
-## ▶️ 실행 방법
+- config/urls.py
+- todo/urls.py
+- header.html
+- settings.py
+- .evn 
 
-1. GitHub 저장소 클론
-```bash
-git clone https://github.com/likelion-python-16/todoList_DRF.git
+## 수정내용
+
+1. config/urls.py
+```python
+path("", lambda request: redirect("todo:todo_List")),
+```
+todo: 앱네임추가
+
+
+2. todo/urls.py
+```python
+app_name ="todo"
+```
+앱이름 추가
+
+3. header.html
+```html
+{% url 'todo:todo_List' %}
+```
+url에 todo: 앱이름 추가
+
+4. 자신의 fly도메인으로 수정
+```python
+# Fly 배포용 ALLOWED_HOSTS 설정
+APP_NAME = os.environ.get("FLY_APP_NAME")
+
+ALLOWED_HOSTS = [f"{APP_NAME}.fly.dev", "todolist-drf-snowy-cherry-4909.fly.dev,"]
+# 본인의 fly 도메인으로 수정
+
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{APP_NAME}.fly.dev",
+    "https://todolist-drf-snowy-cherry-4909.fly.dev/",
+    ]
+# 본인의 fly 도메인으로 수정
 ```
 
-2. 프로젝트 디렉토리로 이동
-```bash
-cd todoList_DRF
+5. settings.py에 있는 SECRET_KEY를 .env에 이동 
+```python
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 ```
 
-3. 가상환경 생성
-```bash
-python -m venv venv
-```
+![config/urls.py](images/config_urls.png)
+![todo/urls.py](images/todo_urls.png)
+![header.html](images/header_html.png)
+![settings.py](images/settings_py.png)
 
-4. Mac/Linux (bash/zsh):
-```bash
-source venv/bin/activate
-```
-
-5. requirements.txt
-```bash
-pip install -r requirements.txt
-```
-
-6. 마이그레이션 (DB 생성)
-```bash
-python manage.py migrate
-```
-
-7. 슈퍼유저 생성 (관리자 페이지용)
-```bash
-python manage.py createsuperuser
-```
-
-8. 서버 실행
-```bash
-python manage.py runserver
-```
