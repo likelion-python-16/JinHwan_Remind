@@ -29,11 +29,12 @@ from . api_views import (
 
 )
 
-
 from rest_framework.routers import DefaultRouter
+
+app_name ="todo"
+
 router = DefaultRouter()
 router.register("view", TodoViewSet, basename="todo") 
-
 
 urlpatterns = [
     # path("list/", views.todo_list, name="todo_List"), # list 목록보기 
