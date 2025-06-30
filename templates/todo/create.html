@@ -17,10 +17,10 @@
         <label for="complete">Complete:</label>
         <input type="checkbox" name="complete" id="complete">
     </div>
-    <div>
+    {% comment %} <div>
       <label for="completed_at">Completed At:</label>
       <input type="datetime-local" name="completed_at" id="completed_at">
-	</div>
+	</div> {% endcomment %}
     <div>
         <label for="image">Images:</label>
         <input type="file" name="image" id="image">
@@ -56,24 +56,26 @@ function onCreateClick(){
 }
 
 
-
 function gatherFormData(){
     //데이터 처리 메서드 객체 생성
     const formData = new FormData();
 
-    //숫자처리
-    let expVal = document.getElementById('exp').value; 
-    if (expVal === "") expVal = 0;
+    // 숫자처리
+    // let expVal = document.getElementById('exp').value; 
+    // if (expVal === "") expVal = 0;
+    const expInput = document.getElementById('exp');
+    const expVal = expInput && expInput.value.trim() !=="" ? Number(expInput.value) : 0; 
+
     
-    //날짜처리
-    const completedAtInput = document.getElementById('completed_at').value; 
-    const completedAt = completedAtInput ? new Date(completedAtInput).toISOString() : null;
+    // 날짜처리 (모델에 의한 자동처리)
+    // const completedAtInput = document.getElementById('completed_at').value; 
+    // const completedAt = completedAtInput ? new Date(completedAtInput).toISOString() : null;
 
     //텍스트 필드 추가
     formData.append("name", document.getElementById('name').value );
     formData.append("description", document.getElementById('description').value);
     formData.append("complete", document.getElementById('complete').checked);
-    //formData.append("complete_at", completedAt);
+    // formData.append("complete_at", completedAt);
     formData.append("exp", Number(expVal));
 
     //이미지 파일 추가

@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 CUSTOM_APPS = [
     "todo",
+    "interaction",
 ]
 
 THIRD_PARTY_APPS = [
@@ -159,15 +160,15 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Fly 배포용 ALLOWED_HOSTS 설정
-APP_NAME = os.environ.get("FLY_APP_NAME")
+# APP_NAME = os.environ.get("FLY_APP_NAME")
 
-ALLOWED_HOSTS = [f"{APP_NAME}.fly.dev", "todolist-drf-snowy-cherry-4909.fly.dev,"]
-# 본인의 fly 도메인으로 수정
+# ALLOWED_HOSTS = [f"{APP_NAME}.fly.dev", "todolist-drf-snowy-cherry-4909.fly.dev,"]
+# # 본인의 fly 도메인으로 수정
 
-CSRF_TRUSTED_ORIGINS = [
-    f"https://{APP_NAME}.fly.dev",
-    "https://todolist-drf-snowy-cherry-4909.fly.dev/",
-    ]
+# CSRF_TRUSTED_ORIGINS = [
+#     f"https://{APP_NAME}.fly.dev",
+#     "https://todolist-drf-snowy-cherry-4909.fly.dev/",
+#     ]
 # 본인의 fly 도메인으로 수정
 
 

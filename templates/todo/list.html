@@ -3,6 +3,13 @@
 {% block content %}
 
 {% if user.is_authenticated%}
+    {# --- 검색바 추가 --- #}
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="검색어를 입력하세요.">
+        <button id="searchBtn" class="btn">검색</button>
+    </div>    
+    {# --- 검색바끝 --- #}
+
     <div class="todocontainer"></div>
     <div class="pagination"></div>
     <button class="todoCreate" id="createBtn"> Todo 등록하기</button>
@@ -10,9 +17,9 @@
     <p>할 일 목록은 로그인 후에 확인하실 수 있습니다.</p>
 {%endif%}
 
-
 <script>
 let currentPage = 1; //현재 페이지를 기억하는 전역변수
+let currentSearch = ""; // currentSearch 초기값
 
 // 1. 문서가 완전히 로드되면 초기화 함수 실행
 document.addEventListener("DOMContentLoaded", init);
@@ -26,7 +33,19 @@ function init(){
 // 2-1. UI 이벤트 바인딩: "Todo 등록하기" 버튼 클릭 시 등록 페이지로 이동
 function UIEvents(){
     document.getElementById("createBtn")
-    .addEventListener("click", onCreateClick);
+        .addEventListener("click", onCreateClick);
+    /*검색 버튼 이벤트 바인딩*/
+    document.getElementById("searchBtn")
+        .addEventListener("click", () => {
+            currentSearch = document.getElementById("searchInput").value.trim();
+            loadTodoList(1); // 새로고침 (list, page, search)
+        })
+        /*
+        input 입력값을 읽어온다.
+        앞뒤 공백을 제거한 입력값을 변수에 저장
+        데이터 호출(재요청)
+        */
+
 }
 
 // 2-1-1. 등록 버튼 클릭 시 /todo/create/로 이동
@@ -37,7 +56,7 @@ function onCreateClick(){
 // 3. 서버에서 Todo 목록 불러오기
 function loadTodoList(page){
     currentPage = page; // 현재 페이지 변수 생성
-    fetchTodoData(page)
+    fetchTodoData(currentPage, currentSearch)
     .then(data => {
         const todos = extractTodoArray(data); //
         renderTodoList(todos); //탬플릿을 꾸며서 화면에 출력하기 함수
@@ -49,11 +68,17 @@ function loadTodoList(page){
 }
 
 // 3-1. axios를 이용해 서버로부터 특정 페이지의 Todo 목록 가져오기
-function fetchTodoData(page){
+function fetchTodoData(page, search=""){
     return axiosInstance
-    .get(`/todo/viewsets/view/?page=${currentPage}`) // 페이지네이션 데이터 요청
-    .then(res => res.data); 
-   
+    //.get(`/todo/viewsets/view/?page=${currentPage}&search=`) // 페이지네이션 데이터 요청
+    .get(`/todo/viewsets/view/`, {
+        params: {page, search} // URL 쿼리스트링을 자동으로 구성해주는 옵션
+    })
+    .then(res => {
+        console.log("응답데이터:", res.data);
+        return res.data;
+    }); 
+    
 }
 
 // 3-2. API 응답 형식에 따라 Todo 배열 추출(페이지네이션들어오면 if 추가)
