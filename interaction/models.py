@@ -13,7 +13,7 @@ class Like(models.Model):
         unique_together = ("user", "todo")
         # todo, user속성은 중복 데이터를 아예 저장하지 못하게 막아주는 제약조건
 
-    def __str__(self):
+    def __str__(self): # 관리자 페이지
         return f"{self.user.username} ❤️ {self.todo.name}"   
         # admin ❤️ 공부하기 
 
@@ -38,8 +38,29 @@ class Comment(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     # 댓글을 좋아요를 누른 유저들을 저장하는 필드
-    likes = models.ManyToManyField(User, related_name="liked_comments", blank=True)
+    likes = models.ManyToManyField(User, through="CommentLike", related_name="liked_comments", blank=True)
 
     def __str__(self):
         return f"{self.user.username} ❤️ {self.content[:20]}"   
         # admin ❤️ 공부하기 
+
+# 누가 어떤 댓글을 언제 좋아요를 눌렀는지 기록
+class CommentLike(models.Model):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    liked_at = models.DateTimeField(auto_now_add=True)
+    # 사용자가 댓글에 좋아요를 누른 시간을 자동으로 저장하기 위한 필드
+
+    is_like = models.BooleanField(default=True)
+    # 현재 좋아요가 유효한지 여부의 bool값
+
+    class Meta: # 중복 방지
+        unique_together = ("user", "comment") 
+
+    def __str__(self):
+        return f"{self.user.username} ❤️ {self.comment.id}" 
+
+# 모델의 역할
+# 비즈니스 로직을 처리한다.
+# 데이터 저장, 검증 처리
+# 어떤 값이 나와야 하는지 처리
