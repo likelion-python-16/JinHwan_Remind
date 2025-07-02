@@ -10,4 +10,6 @@ urlpatterns = [
     path("", lambda request: redirect("todo:todo_List")), # 127.0.0.1:8000/
     path("api-auth/", include("rest_framework.urls")),
     path("accounts/", include("django.contrib.auth.urls")), 
+    path('api/interaction/', include('interaction.urls')),
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

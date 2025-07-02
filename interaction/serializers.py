@@ -35,11 +35,23 @@ class CommentSerializer(serializers.ModelSerializer):
 
     like_count = serializers.SerializerMethodField()
 
+    is_liked = serializers.SerializerMethodField() # ✅ 현재 로그인 유저가 이 댓글에 좋아요 눌렀는지 여부 (True/False)
+
     class Meta:
         model = Comment
-        fields = ["id", "todo", "todo_name", "user", "username", "content", "created_at", "like_count", ]
-        read_only_fields = ["todo","user","created_at"] 
-        # 폼에서 사용자가 수정할수 없어야 하는 필드를 명확히 구분해주기 위한 용도
+        # fields = "all"
+        fields = [
+            "id",  # Todo 기본키
+            "todo",  # 외래키 (댓글 또는 좋아요 대상)
+            "todo_name",  # 연결된 Todo의 이름 (source로 처리)
+            "user",  # 작성자 또는 요청 유저
+            "username",  # 작성자 이름 (source로 처리)
+            "content",  # 댓글 내용
+            "created_at",  # 작성 시간
+            "like_count",  # 좋아요 수 (SerializerMethodField)
+            "is_liked",  # 내가 좋아요 눌렀는지 여부 (SerializerMethodField)
+        ]
+        read_only_fields = ["todo", "user", "created_at"]
 
     def get_like_count(self, obj):
         return obj.likes.count() 
@@ -66,5 +78,5 @@ class CommentLikeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CommentLike
-        fields = ["id", "user", "username", "comment", "comment_content", "is_like"]
+        fields = ["id", "user", "username", "comment", "comment_content", "is_like", "like_count"]
         read_only_fields = ["user"]
