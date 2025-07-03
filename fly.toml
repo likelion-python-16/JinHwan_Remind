@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for todolist-drf-snowy-cherry-4909 on 2025-06-27T15:43:54+09:00
+# fly.toml app configuration file generated for choihwan on 2025-07-03T17:06:10+09:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'todolist-drf-snowy-cherry-4909'
+app = 'choihwan'
 primary_region = 'hkg'
 console_command = '/code/manage.py shell'
 
