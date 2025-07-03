@@ -167,7 +167,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # CSRF_TRUSTED_ORIGINS = [
 #     f"https://{APP_NAME}.fly.dev",
-#     "https://todolist-drf-snowy-cherry-4909.fly.dev/",
+#     "https://todolist-drf-dd.fly.dev/",
 #     ]
 # 본인의 fly 도메인으로 수정
 
